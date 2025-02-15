@@ -1,6 +1,7 @@
 import { View, Dimensions } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { useTheme } from 'react-native-paper';
+import { formatCurrency } from '../../utils/currency';
 
 export function ExpenseChart() {
   const theme = useTheme();
@@ -31,6 +32,7 @@ export function ExpenseChart() {
           style: {
             borderRadius: 16,
           },
+          formatYLabel: (value: string) => formatCurrency(parseInt(value)),
         }}
         bezier
         style={{

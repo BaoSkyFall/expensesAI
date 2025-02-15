@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { Card, Text, Avatar, Chip, Button, useTheme } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ManageMembersModal } from './ManageMembersModal';
+import { formatCurrency } from '../../utils/currency';
 
 type FamilyMember = {
   id: string;
@@ -51,7 +52,9 @@ export function FamilyCard({ name, members, totalExpenses, onManageMembers, onVi
             <View>
               <Text variant="titleLarge">{name}</Text>
               <Text variant="bodyMedium" style={styles.expenseText}>
-                Total Expenses: <Text style={{ color: theme.colors.error }}>${totalExpenses}</Text>
+                Total Expenses: <Text style={{ color: theme.colors.error }}>
+                  {formatCurrency(totalExpenses)}
+                </Text>
               </Text>
             </View>
             <Chip icon="crown" style={styles.roleChip}>Admin</Chip>

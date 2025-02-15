@@ -6,6 +6,7 @@ import { FamilyStats } from '../../components/families/FamilyStats';
 import { FamilyExpenseChart } from '../../components/families/FamilyExpenseChart';
 import { FamilyMembersList } from '../../components/families/FamilyMembersList';
 import { FamilyExpenseList } from '../../components/families/FamilyExpenseList';
+import { formatCurrency } from '../../utils/currency';
 
 export default function FamilyDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -32,7 +33,7 @@ export default function FamilyDetailsScreen() {
       <View style={[styles.header, { backgroundColor: theme.colors.surface }]}>
         <Text variant="headlineMedium" style={styles.title}>{familyDetails.name}</Text>
         <Text variant="bodyLarge" style={{ color: theme.colors.error }}>
-          Total Expenses: ${familyDetails.totalExpenses}
+          Total Expenses: {formatCurrency(familyDetails.totalExpenses)}
         </Text>
       </View>
 

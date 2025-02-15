@@ -3,6 +3,7 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import { Text, useTheme, Card, Avatar } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { formatCurrency } from '../../utils/currency';
 
 type Transaction = {
   id: string;
@@ -87,7 +88,7 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
                     : theme.colors.error
                 }}
               >
-                {transaction.type === 'income' ? '+' : '-'}${transaction.amount}
+                {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
               </Text>
             </View>
           </Swipeable>

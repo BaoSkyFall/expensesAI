@@ -72,4 +72,89 @@ export type AIInsight = {
   content: Record<string, any>;
   created_at: string;
   is_read: boolean;
-}; 
+};
+
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+export interface Database {
+  public: {
+    Tables: {
+      expenses: {
+        Row: {
+          id: string
+          amount: number
+          description: string
+          category_id: string
+          user_id: string
+          family_id: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          amount: number
+          description: string
+          category_id: string
+          user_id: string
+          family_id?: string | null
+          created_at?: string
+        }
+        Update: Partial<Omit<Database['public']['Tables']['expenses']['Insert'], 'id'>>
+      }
+      families: {
+        Row: {
+          id: string
+          name: string
+          created_at: string
+          created_by: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          created_at?: string
+          created_by: string
+        }
+        Update: Partial<Omit<Database['public']['Tables']['families']['Insert'], 'id'>>
+      }
+      family_members: {
+        Row: {
+          id: string
+          family_id: string
+          user_id: string
+          role: 'admin' | 'member'
+          status: 'active' | 'pending'
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          family_id: string
+          user_id: string
+          role?: 'admin' | 'member'
+          status?: 'active' | 'pending'
+          created_at?: string
+        }
+        Update: Partial<Omit<Database['public']['Tables']['family_members']['Insert'], 'id'>>
+      }
+      profiles: {
+        Row: {
+          id: string
+          full_name: string
+          avatar_url: string | null
+          created_at: string
+        }
+        Insert: {
+          id: string
+          full_name: string
+          avatar_url?: string | null
+          created_at?: string
+        }
+        Update: Partial<Omit<Database['public']['Tables']['profiles']['Insert'], 'id'>>
+      }
+    }
+  }
+} 

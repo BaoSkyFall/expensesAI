@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Card, Text, useTheme } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { formatCurrency } from '../../utils/currency';
 
 export function WalletHeader() {
   const theme = useTheme();
@@ -11,8 +12,11 @@ export function WalletHeader() {
       <Card.Content>
         <View style={styles.balanceContainer}>
           <Text variant="titleMedium" style={styles.label}>Total Balance</Text>
-          <Text variant="headlineLarge" style={{ color: theme.colors.primary }}>
-            $2,450.00
+          <Text 
+            variant="headlineMedium" 
+            style={[styles.balance, { color: theme.colors.primary }]}
+          >
+            {formatCurrency(2450)}
           </Text>
         </View>
         <View style={styles.statsContainer}>
@@ -69,5 +73,9 @@ const styles = StyleSheet.create({
   },
   statText: {
     marginLeft: 8,
+  },
+  balance: {
+    fontSize: 24,
+    fontWeight: 'bold',
   },
 }); 
