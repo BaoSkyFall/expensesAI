@@ -11,13 +11,10 @@ export default function AuthLayout() {
 
   useEffect(() => {
     if (user) {
+      // If user is logged in, redirect to dashboard
       router.replace('/(dashboard)/');
     }
   }, [user]);
-
-  const handleSkip = () => {
-    router.push('/(auth)/login');
-  };
 
   // Don't render anything while redirecting
   if (user) {
@@ -32,7 +29,7 @@ export default function AuthLayout() {
         }}
       >
         <Stack.Screen 
-          name="index" // This will render WelcomeScreen
+          name="index"
           options={{
             animation: 'none',
           }}
@@ -55,7 +52,7 @@ export default function AuthLayout() {
           mode="text"
           style={styles.skipButton}
           labelStyle={styles.skipLabel}
-          onPress={handleSkip}
+          onPress={() => router.push('/(auth)/login')}
         >
           Skip
         </Button>
