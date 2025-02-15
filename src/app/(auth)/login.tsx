@@ -1,89 +1,83 @@
-import { useState } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
-import { TextInput, Button, Text, useTheme } from 'react-native-paper';
-import { Link, router } from 'expo-router';
+import React, { useState } from 'react';
+import { View, StyleSheet, Image } from 'react-native';
+import { Text, TextInput, Button } from 'react-native-paper';
+import { Link } from 'expo-router';
 import { useAuth } from '../../hooks/useAuth';
+import { LabeledInput } from '../../components/common/LabeledInput';
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const { signIn } = useAuth();
-  const theme = useTheme();
 
   const handleLogin = async () => {
-    if (loading) return;
-    setLoading(true);
-    setError(null);
-
     try {
-      const { error: signInError, data } = await signIn(email, password);
-      if (signInError) throw signInError;
-      
-      // If login is successful, navigate to the dashboard
-      if (data.session) {
-        router.replace('/(dashboard)');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
+      await signIn(username, password);
+    } catch (error) {
+      console.error('Login error:', error);
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-    >
-      <View style={styles.content}>
-        <Text variant="headlineMedium" style={styles.title}>
-          Welcome Back
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text variant="displaySmall" style={styles.title}>
+          Hey 👋
         </Text>
+        <Text variant="headlineMedium" style={styles.subtitle}>
+          Login Now!
+        </Text>
+      </View>
 
-        <TextInput
-          label="Email"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-          style={styles.input}
+      <View style={styles.form}>
+        <View style={styles.linkContainer}>
+          <Text variant="bodyMedium" style={styles.linkText}>
+            I Am A Old User
+          </Text>
+          <Text variant="bodyMedium" style={styles.separator}>/</Text>
+          <Link href="/register" asChild>
+            <Button mode="text" compact>
+              Create New
+            </Button>
+          </Link>
+        </View>
+
+        <LabeledInput
+          label="Username"
+          value={username}
+          onChangeText={setUsername}
         />
 
-        <TextInput
+        <LabeledInput
           label="Password"
           value={password}
           onChangeText={setPassword}
-          secureTextEntry
-          style={styles.input}
+          isPassword
         />
 
-        {error && (
-          <Text style={[styles.error, { color: theme.colors.error }]}>
-            {error}
-          </Text>
-        )}
+        <View style={styles.forgotContainer}>
+          <Link href="/forgot-password" asChild>
+            <Button mode="text" compact>
+              Forgot Password?
+            </Button>
+          </Link>
+          <Link href="/reset" asChild>
+            <Button mode="text" compact>
+              Reset
+            </Button>
+          </Link>
+        </View>
 
         <Button
           mode="contained"
           onPress={handleLogin}
-          loading={loading}
-          style={styles.button}
+          style={styles.loginButton}
+          contentStyle={styles.loginButtonContent}
         >
-          Login
+          Login now
         </Button>
-
-        <View style={styles.footer}>
-          <Text>Don't have an account? </Text>
-          <Link href="/register" asChild>
-            <Button mode="text" compact>
-              Register
-            </Button>
-          </Link>
-        </View>
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -92,29 +86,43 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  content: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
+  header: {
+    paddingHorizontal: 24,
+    paddingTop: 48,
+    paddingBottom: 24,
   },
   title: {
-    textAlign: 'center',
-    marginBottom: 24,
+    fontWeight: 'bold',
+    marginBottom: 8,
   },
-  input: {
-    marginBottom: 16,
+  subtitle: {
+    fontWeight: 'bold',
   },
-  button: {
-    marginTop: 8,
-    marginBottom: 16,
+  form: {
+    flex: 1,
+    padding: 24,
   },
-  error: {
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  footer: {
+  linkContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    marginBottom: 24,
+  },
+  linkText: {
+    color: '#666',
+  },
+  separator: {
+    marginHorizontal: 8,
+    color: '#666',
+  },
+  forgotContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 32,
+  },
+  loginButton: {
+    borderRadius: 8,
+  },
+  loginButtonContent: {
+    paddingVertical: 8,
   },
 }); 

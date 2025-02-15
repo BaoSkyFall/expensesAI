@@ -1,37 +1,43 @@
-import { useEffect } from 'react';
-import { Slot, Stack } from 'expo-router';
-import { PaperProvider } from 'react-native-paper';
-import { theme } from '../theme';
-import { useAuth } from '../hooks/useAuth';
-import LoadingScreen from '../components/common/LoadingScreen';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Slot } from 'expo-router';
+import { PaperProvider, MD3LightTheme } from 'react-native-paper';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-export default function Layout() {
-  const { user, loading } = useAuth();
+const theme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: '#0095FF',
+    secondary: '#E6F4FF',
+    error: '#FF6B6B',
+    background: '#FFFFFF',
+    surface: '#FFFFFF',
+    outline: '#666666',
+    surfaceVariant: '#F5F5F5',
+    // Text colors
+    onSurface: '#1A1A1A',
+    onSurfaceVariant: '#666666',
+    // Border colors
+    outlineVariant: '#EEEEEE',
+  },
+};
 
-  if (loading) {
-    return (
-      <PaperProvider theme={theme}>
-        <LoadingScreen />
-      </PaperProvider>
-    );
-  }
-
+export default function AppLayout() {
   return (
-    <PaperProvider theme={theme}>
-      {!user ? (
-        // Use Slot for auth routes
-        <Slot />
-      ) : (
-        // Use Stack for authenticated routes
-        <Stack
-          screenOptions={{
-            headerStyle: {
-              backgroundColor: theme.colors.primary,
-            },
-            headerTintColor: '#fff',
-          }}
-        />
-      )}
-    </PaperProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <PaperProvider theme={theme}>
+        <View style={styles.content}>
+          <Slot />
+        </View>
+      </PaperProvider>
+    </GestureHandlerRootView>
   );
-} 
+}
+
+const styles = StyleSheet.create({
+  content: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+  },
+}); 

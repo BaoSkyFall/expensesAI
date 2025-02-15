@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { ScrollView, View, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Text, useTheme } from 'react-native-paper';
 import { FamilyStats } from '../../components/families/FamilyStats';
@@ -28,26 +28,32 @@ export default function FamilyDetailsScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
-        <Text variant="headlineMedium">{familyDetails.name}</Text>
+        <Text variant="headlineMedium" style={styles.title}>{familyDetails.name}</Text>
         <Text variant="bodyLarge" style={{ color: theme.colors.error }}>
           Total Expenses: ${familyDetails.totalExpenses}
         </Text>
       </View>
 
-      <FamilyStats
-        totalExpenses={familyDetails.totalExpenses}
-        monthlyBudget={familyDetails.monthlyBudget}
-        membersCount={familyDetails.members.length}
-      />
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <FamilyStats
+          totalExpenses={familyDetails.totalExpenses}
+          monthlyBudget={familyDetails.monthlyBudget}
+          membersCount={familyDetails.members.length}
+        />
 
-      <FamilyExpenseChart familyId={id} />
-      
-      <FamilyMembersList members={familyDetails.members} />
-      
-      <FamilyExpenseList expenses={familyDetails.expenses} />
-    </ScrollView>
+        <FamilyExpenseChart familyId={id} />
+        
+        <FamilyMembersList members={familyDetails.members} />
+        
+        <FamilyExpenseList expenses={familyDetails.expenses} />
+      </ScrollView>
+    </View>
   );
 }
 
@@ -58,7 +64,19 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 16,
+    paddingTop: 8,
     backgroundColor: '#fff',
     marginBottom: 8,
+    zIndex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 24,
+  },
+  title: {
+    color: '#1a1a1a',
+    fontWeight: 'bold',
   },
 }); 

@@ -1,85 +1,74 @@
-import { useState } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
-import { TextInput, Button, Text, useTheme } from 'react-native-paper';
+import React, { useState } from 'react';
+import { View, StyleSheet, Image } from 'react-native';
+import { Text, TextInput, Button } from 'react-native-paper';
 import { Link, router } from 'expo-router';
 import { useAuth } from '../../hooks/useAuth';
+import { LabeledInput } from '../../components/common/LabeledInput';
 
 export default function RegisterScreen() {
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const { signUp } = useAuth();
-  const theme = useTheme();
 
   const handleRegister = async () => {
-    if (loading) return;
-    setLoading(true);
-    setError(null);
-
     try {
-      const { error } = await signUp(email, password, fullName);
-      if (error) throw error;
-      router.replace('/login');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
+      await signUp(email, password, { full_name: fullName });
+      router.replace('/');
+    } catch (error) {
+      console.error('Registration error:', error);
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-    >
-      <View style={styles.content}>
-        <Text variant="headlineMedium" style={styles.title}>
-          Create Account
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text variant="displaySmall" style={styles.title}>
+          Unleash Your
         </Text>
+        <Text variant="displaySmall" style={styles.title}>
+          Financial Potentials
+        </Text>
+        <Text variant="bodyLarge" style={styles.subtitle}>
+          Artificial intelligence for smarter financial decisions
+        </Text>
+      </View>
 
-        <TextInput
+      <View style={styles.form}>
+        <LabeledInput
           label="Full Name"
           value={fullName}
           onChangeText={setFullName}
-          style={styles.input}
         />
 
-        <TextInput
+        <LabeledInput
           label="Email"
           value={email}
           onChangeText={setEmail}
-          autoCapitalize="none"
           keyboardType="email-address"
-          style={styles.input}
+          autoCapitalize="none"
         />
 
-        <TextInput
+        <LabeledInput
           label="Password"
           value={password}
           onChangeText={setPassword}
-          secureTextEntry
-          style={styles.input}
+          isPassword
         />
-
-        {error && (
-          <Text style={[styles.error, { color: theme.colors.error }]}>
-            {error}
-          </Text>
-        )}
 
         <Button
           mode="contained"
           onPress={handleRegister}
-          loading={loading}
-          style={styles.button}
+          style={styles.registerButton}
+          contentStyle={styles.registerButtonContent}
         >
-          Register
+          Create Account
         </Button>
 
-        <View style={styles.footer}>
-          <Text>Already have an account? </Text>
+        <View style={styles.loginContainer}>
+          <Text variant="bodyMedium" style={styles.loginText}>
+            Already have an account?
+          </Text>
           <Link href="/login" asChild>
             <Button mode="text" compact>
               Login
@@ -87,7 +76,7 @@ export default function RegisterScreen() {
           </Link>
         </View>
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -96,29 +85,36 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  content: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
+  header: {
+    paddingHorizontal: 24,
+    paddingTop: 48,
+    paddingBottom: 24,
   },
   title: {
-    textAlign: 'center',
-    marginBottom: 24,
+    fontWeight: 'bold',
   },
-  input: {
-    marginBottom: 16,
-  },
-  button: {
+  subtitle: {
+    color: '#666',
     marginTop: 8,
-    marginBottom: 16,
   },
-  error: {
-    marginBottom: 16,
-    textAlign: 'center',
+  form: {
+    flex: 1,
+    padding: 24,
   },
-  footer: {
+  registerButton: {
+    borderRadius: 8,
+    marginTop: 16,
+  },
+  registerButtonContent: {
+    paddingVertical: 8,
+  },
+  loginContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 24,
+  },
+  loginText: {
+    color: '#666',
   },
 }); 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { ScrollView, View, StyleSheet } from 'react-native';
 import { Text, Searchbar } from 'react-native-paper';
 import { FamilyCard } from '../../components/families/FamilyCard';
 import { AddFamilyButton } from '../../components/families/AddFamilyButton';
@@ -56,7 +56,11 @@ export default function FamiliesScreen() {
         />
       </View>
 
-      <ScrollView>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         {filteredFamilies.map(family => (
           <FamilyCard
             key={family.id}
@@ -86,10 +90,18 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 16,
-    backgroundColor: '#fff',
+    paddingTop: 8,
+    backgroundColor: '#f5f5f5',
+    zIndex: 1,
   },
   searchBar: {
     marginBottom: 8,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 80, // Extra padding for FAB
   },
   emptyContainer: {
     padding: 16,

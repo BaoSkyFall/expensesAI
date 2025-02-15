@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Card, Text, useTheme } from 'react-native-paper';
-import { LineChart } from 'react-native-chart-kit';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import Svg, { Circle, G } from 'react-native-svg';
 
 type FamilyExpenseChartProps = {
   familyId: string;
@@ -9,39 +10,67 @@ type FamilyExpenseChartProps = {
 
 export function FamilyExpenseChart({ familyId }: FamilyExpenseChartProps) {
   const theme = useTheme();
-  const screenWidth = Dimensions.get('window').width;
+  const categories = [
+    { name: 'Food', amount: 410, color: '#FF6B6B', percent: 35 },
+    { name: 'Transport', amount: 250, color: '#4ECDC4', percent: 25 },
+    { name: 'Shopping', amount: 180, color: '#45B7D1', percent: 20 },
+    { name: 'Bills', amount: 160, color: '#96CEB4', percent: 15 },
+    { name: 'Others', amount: 50, color: '#FFEEAD', percent: 5 },
+  ];
 
-  // TODO: Fetch real data from API
-  const data = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    datasets: [
-      {
-        data: [1500, 2300, 1800, 2100, 2800, 2400],
-      },
-    ],
-  };
+  const size = 200;
+  const strokeWidth = 20;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+
+  let currentAngle = 0;
 
   return (
     <Card style={styles.card}>
       <Card.Content>
-        <Text variant="titleMedium" style={styles.title}>Expense Trends</Text>
-        <LineChart
-          data={data}
-          width={screenWidth - 64}
-          height={220}
-          chartConfig={{
-            backgroundColor: theme.colors.primary,
-            backgroundGradientFrom: '#fff',
-            backgroundGradientTo: '#fff',
-            decimalPlaces: 0,
-            color: (opacity = 1) => theme.colors.primary,
-            style: {
-              borderRadius: 16,
-            },
-          }}
-          bezier
-          style={styles.chart}
-        />
+        <Text variant="titleMedium" style={styles.title}>EXPENSES</Text>
+        
+        <View style={styles.chartContainer}>
+          <Svg width={size} height={size} style={styles.chart}>
+            {categories.map((category, index) => {
+              const strokeDasharray = `${(category.percent * circumference) / 100} ${circumference}`;
+              const rotation = currentAngle;
+              currentAngle += (category.percent * 360) / 100;
+
+              return (
+                <G key={index} rotation={rotation} origin={`${size/2}, ${size/2}`}>
+                  <Circle
+                    cx={size/2}
+                    cy={size/2}
+                    r={radius}
+                    stroke={category.color}
+                    strokeWidth={strokeWidth}
+                    strokeDasharray={strokeDasharray}
+                    strokeLinecap="round"
+                    fill="none"
+                  />
+                </G>
+              );
+            })}
+            <View style={[styles.centerContent, { width: size, height: size }]}>
+              <MaterialCommunityIcons name="star" size={24} color={theme.colors.primary} />
+              <Text variant="headlineMedium">$410</Text>
+              <Text variant="bodySmall">LIFESTYLE</Text>
+            </View>
+          </Svg>
+        </View>
+
+        <View style={styles.categories}>
+          {categories.map((category, index) => (
+            <View key={index} style={styles.categoryItem}>
+              <View style={[styles.categoryDot, { backgroundColor: category.color }]} />
+              <Text variant="bodyMedium">{category.name}</Text>
+              <Text variant="bodyMedium" style={styles.categoryAmount}>
+                ${category.amount}
+              </Text>
+            </View>
+          ))}
+        </View>
       </Card.Content>
     </Card>
   );
@@ -53,10 +82,37 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   title: {
-    marginBottom: 16,
+    marginBottom: 24,
+    textAlign: 'center',
+  },
+  chartContainer: {
+    alignItems: 'center',
+    marginBottom: 24,
   },
   chart: {
-    marginVertical: 8,
-    borderRadius: 16,
+    transform: [{ rotate: '-90deg' }],
+  },
+  centerContent: {
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    transform: [{ rotate: '90deg' }],
+  },
+  categories: {
+    gap: 12,
+  },
+  categoryItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+  },
+  categoryDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 8,
+  },
+  categoryAmount: {
+    marginLeft: 'auto',
   },
 }); 
