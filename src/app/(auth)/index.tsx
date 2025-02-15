@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { View, StyleSheet, Image, Dimensions, FlatList, Animated } from 'react-native';
-import { Text, Button } from 'react-native-paper';
+import { Text, Button, useTheme } from 'react-native-paper';
 import { Link } from 'expo-router';
 
 const { width } = Dimensions.get('window');
@@ -27,6 +27,7 @@ const slides = [
 ];
 
 export default function WelcomeScreen() {
+  const theme = useTheme();
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
   const slidesRef = useRef(null);
@@ -83,8 +84,12 @@ export default function WelcomeScreen() {
               key={index}
               style={[
                 styles.dot,
-                { width: dotWidth, opacity },
-                index === slides.length - 1 && styles.lastDot,
+                {
+                  width: dotWidth,
+                  opacity,
+                  backgroundColor: theme.colors.primary,
+                },
+                index === slides.length - 1 ? styles.lastDot : null,
               ]}
             />
           );
@@ -181,7 +186,6 @@ const styles = StyleSheet.create({
   dot: {
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#8B5CF6',
     marginHorizontal: 4,
   },
   lastDot: {
