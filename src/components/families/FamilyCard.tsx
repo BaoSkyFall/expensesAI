@@ -42,7 +42,10 @@ export function FamilyCard({ name, members, totalExpenses, onManageMembers, onVi
 
   return (
     <>
-      <Card style={styles.card}>
+      <Card 
+        style={[styles.card, { backgroundColor: theme.colors.surface }]}
+        mode="outlined"
+      >
         <Card.Content>
           <View style={styles.header}>
             <View>
@@ -81,6 +84,7 @@ export function FamilyCard({ name, members, totalExpenses, onManageMembers, onVi
               onPress={() => setManageMembersVisible(true)}
               icon="account-multiple"
               style={styles.button}
+              contentStyle={styles.buttonContent}
             >
               Manage Members
             </Button>
@@ -89,6 +93,7 @@ export function FamilyCard({ name, members, totalExpenses, onManageMembers, onVi
               onPress={onViewDetails}
               icon="chart-box"
               style={styles.button}
+              contentStyle={styles.buttonContent}
             >
               View Details
             </Button>
@@ -111,8 +116,9 @@ export function FamilyCard({ name, members, totalExpenses, onManageMembers, onVi
 
 const styles = StyleSheet.create({
   card: {
-    margin: 16,
-    marginBottom: 0,
+    marginBottom: 16,
+    elevation: 0,
+    borderColor: '#EEEEEE',
   },
   header: {
     flexDirection: 'row',
@@ -146,8 +152,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     gap: 8,
+    marginTop: 16,
   },
   button: {
-    minWidth: 140,
+    borderRadius: 8,
+    minWidth: 100,
+  },
+  buttonContent: {
+    // paddingHorizontal: 8,
+    // paddingVertical: 4,
   },
 }); 

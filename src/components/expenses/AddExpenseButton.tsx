@@ -5,12 +5,14 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { CategorySelector } from './CategorySelector';
 import { EXPENSE_CATEGORIES, ExpenseCategoryType } from '../../constants/categories';
 import React from 'react';
+import { useTheme } from 'react-native-paper';
 
 export function AddExpenseButton() {
   const [visible, setVisible] = useState(false);
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<ExpenseCategoryType | null>(null);
+  const theme = useTheme();
 
   const handleSubmit = async () => {
     // TODO: Implement expense creation with category
@@ -33,7 +35,10 @@ export function AddExpenseButton() {
     <>
       <Portal>
         <Modal visible={visible} onDismiss={() => setVisible(false)}>
-          <Card style={styles.modal}>
+          <Card 
+            style={[styles.modal, { backgroundColor: theme.colors.surface }]}
+            mode="outlined"
+          >
             <ScrollView>
               <Card.Title title="Add New Expense" />
               <Card.Content>
@@ -43,6 +48,12 @@ export function AddExpenseButton() {
                   onChangeText={setAmount}
                   keyboardType="numeric"
                   style={styles.input}
+                  mode="outlined"
+                  theme={{
+                    colors: {
+                      background: theme.colors.surfaceVariant,
+                    },
+                  }}
                 />
                 <TextInput
                   label="Description"
@@ -55,11 +66,20 @@ export function AddExpenseButton() {
                   selectedCategory={selectedCategory?.id || null}
                   onSelectCategory={setSelectedCategory}
                 />
-                <View style={styles.buttons}>
-                  <Button onPress={() => setVisible(false)}>Cancel</Button>
+                <View style={styles.buttonContainer}>
+                  <Button 
+                    mode="outlined" 
+                    onPress={() => setVisible(false)}
+                    style={styles.button}
+                    contentStyle={styles.buttonContent}
+                  >
+                    Cancel
+                  </Button>
                   <Button 
                     mode="contained" 
                     onPress={handleSubmit}
+                    style={styles.button}
+                    contentStyle={styles.buttonContent}
                     disabled={!amount || !description || !selectedCategory}
                   >
                     Save
@@ -71,8 +91,8 @@ export function AddExpenseButton() {
         </Modal>
       </Portal>
       <FAB
-        icon={() => <MaterialCommunityIcons name="plus" size={24} color="white" />}
-        style={styles.fab}
+        icon="plus"
+        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
         onPress={() => setVisible(true)}
       />
     </>
@@ -95,10 +115,19 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: 8,
   },
-  buttons: {
+  buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     gap: 8,
-    marginTop: 16,
+    marginTop: 24,
+    marginBottom: 16,
+  },
+  button: {
+    borderRadius: 8,
+    minWidth: 80,
+  },
+  buttonContent: {
+    // paddingHorizontal: 2,
+    // paddingVertical: 2,
   },
 }); 

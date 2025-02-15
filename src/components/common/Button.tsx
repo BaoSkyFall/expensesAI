@@ -1,26 +1,32 @@
-import React, { useState } from 'react';
-import { Pressable, StyleSheet } from 'react-native';
-import { Button as PaperButton, useTheme } from 'react-native-paper';
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import { Button as PaperButton, useTheme, MD3Theme } from 'react-native-paper';
 
-export function Button({ mode = 'contained', style, ...props }) {
-  const theme = useTheme();
-  const [isPressed, setIsPressed] = useState(false);
+type ButtonMode = 'text' | 'outlined' | 'contained' | 'elevated' | 'contained-tonal';
+
+interface CustomButtonProps {
+  mode?: ButtonMode;
+  style?: any;
+  [key: string]: any;
+}
+
+export function Button({ mode = 'contained', style, ...props }: CustomButtonProps) {
+  const theme = useTheme<MD3Theme>();
 
   const getBackgroundColor = () => {
-    if (mode === 'contained') {
-      return isPressed ? theme.colors.primaryHover : theme.colors.primary;
+    switch (mode) {
+      case 'contained':
+        return theme.colors.primary;
+      case 'outlined':
+        return theme.colors.surface;
+      default:
+        return 'transparent';
     }
-    if (mode === 'outlined') {
-      return isPressed ? theme.colors.surfaceHover : theme.colors.surface;
-    }
-    return 'transparent';
   };
 
   return (
     <PaperButton
       mode={mode}
-      onPressIn={() => setIsPressed(true)}
-      onPressOut={() => setIsPressed(false)}
       style={[
         styles.button,
         { backgroundColor: getBackgroundColor() },

@@ -30,7 +30,10 @@ export function BottomNavBar() {
   ];
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
+    <View style={[styles.container, { 
+      backgroundColor: theme.colors.surface,
+      borderTopColor: theme.colors.outlineVariant,
+    }]}>
       {routes.map((route) => {
         const isActive = pathname === route.href;
         return (
@@ -62,7 +65,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     borderTopWidth: 1,
-    borderTopColor: '#eee',
     height: 60,
     paddingBottom: 8,
   },

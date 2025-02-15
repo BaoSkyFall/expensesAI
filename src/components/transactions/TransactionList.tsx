@@ -53,11 +53,14 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
   };
 
   return (
-    <Card style={styles.card}>
-      <Card.Content>
-        {transactions.map((transaction) => (
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      {transactions.map((transaction) => (
+        <Card 
+          key={transaction.id}
+          style={[styles.card, { backgroundColor: theme.colors.surface }]}
+          mode="outlined"
+        >
           <Swipeable
-            key={transaction.id}
             renderRightActions={() => renderRightActions(transaction.id)}
           >
             <View style={styles.transaction}>
@@ -88,13 +91,16 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
               </Text>
             </View>
           </Swipeable>
-        ))}
-      </Card.Content>
-    </Card>
+        </Card>
+      ))}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   card: {
     margin: 16,
     marginBottom: 8,

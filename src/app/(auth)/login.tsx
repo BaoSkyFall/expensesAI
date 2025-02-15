@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Image } from 'react-native';
-import { Text, TextInput, Button } from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
+import { Text, Button, useTheme } from 'react-native-paper';
 import { Link } from 'expo-router';
 import { useAuth } from '../../hooks/useAuth';
 import { LabeledInput } from '../../components/common/LabeledInput';
@@ -9,6 +9,7 @@ export default function LoginScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { signIn } = useAuth();
+  const theme = useTheme();
 
   const handleLogin = async () => {
     try {
@@ -19,22 +20,36 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.header}>
-        <Text variant="displaySmall" style={styles.title}>
+        <Text 
+          variant="displaySmall" 
+          style={[styles.title, { color: theme.colors.onSurface }]}
+        >
           Hey 👋
         </Text>
-        <Text variant="headlineMedium" style={styles.subtitle}>
+        <Text 
+          variant="headlineMedium" 
+          style={[styles.subtitle, { color: theme.colors.onSurface }]}
+        >
           Login Now!
         </Text>
       </View>
 
       <View style={styles.form}>
         <View style={styles.linkContainer}>
-          <Text variant="bodyMedium" style={styles.linkText}>
+          <Text 
+            variant="bodyMedium" 
+            style={[styles.linkText, { color: theme.colors.onSurfaceVariant }]}
+          >
             I Am A Old User
           </Text>
-          <Text variant="bodyMedium" style={styles.separator}>/</Text>
+          <Text 
+            variant="bodyMedium" 
+            style={[styles.separator, { color: theme.colors.onSurfaceVariant }]}
+          >
+            /
+          </Text>
           <Link href="/register" asChild>
             <Button mode="text" compact>
               Create New
@@ -71,7 +86,7 @@ export default function LoginScreen() {
         <Button
           mode="contained"
           onPress={handleLogin}
-          style={styles.loginButton}
+          style={[styles.loginButton, { backgroundColor: theme.colors.primary }]}
           contentStyle={styles.loginButtonContent}
         >
           Login now
@@ -84,7 +99,6 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   header: {
     paddingHorizontal: 24,
@@ -108,11 +122,9 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   linkText: {
-    color: '#666666',
   },
   separator: {
     marginHorizontal: 8,
-    color: '#666666',
   },
   forgotContainer: {
     flexDirection: 'row',
@@ -122,7 +134,6 @@ const styles = StyleSheet.create({
   loginButton: {
     borderRadius: 12,
     elevation: 0,
-    backgroundColor: '#0095FF',
   },
   loginButtonContent: {
     paddingVertical: 12,

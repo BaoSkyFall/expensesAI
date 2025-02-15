@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, TouchableOpacity } from 'react-native';
 import { Text, useTheme, MD3Theme } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { EXPENSE_CATEGORIES, ExpenseCategoryType } from '../../constants/categories';
@@ -10,7 +10,7 @@ type CategorySelectorProps = {
 };
 
 export function CategorySelector({ selectedCategory, onSelectCategory }: CategorySelectorProps) {
-  const theme = useTheme<MD3Theme>();
+  const theme = useTheme();
 
   return (
     <ScrollView 
@@ -19,18 +19,17 @@ export function CategorySelector({ selectedCategory, onSelectCategory }: Categor
       contentContainerStyle={styles.container}
     >
       {EXPENSE_CATEGORIES.map((category) => (
-        <Pressable
+        <TouchableOpacity
           key={category.id}
-          onPress={() => onSelectCategory(category)}
           style={[
-            styles.categoryItem,
-            {
+            styles.category,
+            { 
               backgroundColor: selectedCategory === category.id 
-                ? category.color 
-                : theme.colors.background,
-              borderColor: category.color,
-            },
+                ? theme.colors.primary 
+                : theme.colors.surfaceVariant 
+            }
           ]}
+          onPress={() => onSelectCategory(category)}
         >
           <MaterialCommunityIcons
             name={category.icon}
@@ -50,7 +49,7 @@ export function CategorySelector({ selectedCategory, onSelectCategory }: Categor
           >
             {category.name}
           </Text>
-        </Pressable>
+        </TouchableOpacity>
       ))}
     </ScrollView>
   );
@@ -61,7 +60,7 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 8,
   },
-  categoryItem: {
+  category: {
     padding: 12,
     borderRadius: 12,
     borderWidth: 1,

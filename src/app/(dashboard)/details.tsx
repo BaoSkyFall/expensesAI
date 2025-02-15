@@ -28,8 +28,8 @@ export default function FamilyDetailsScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <View style={[styles.header, { backgroundColor: theme.colors.surface }]}>
         <Text variant="headlineMedium" style={styles.title}>{familyDetails.name}</Text>
         <Text variant="bodyLarge" style={{ color: theme.colors.error }}>
           Total Expenses: ${familyDetails.totalExpenses}

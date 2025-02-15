@@ -1,20 +1,16 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { Portal, FAB, Modal, Card, TextInput, Button } from 'react-native-paper';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Portal, FAB, Modal, Card, TextInput, Button, useTheme } from 'react-native-paper';
 
 export function AddFamilyButton() {
   const [visible, setVisible] = useState(false);
   const [name, setName] = useState('');
+  const theme = useTheme();
 
   const handleSubmit = async () => {
     // TODO: Implement family creation
-    console.log({ name });
+    console.log('Creating family:', name);
     setVisible(false);
-    resetForm();
-  };
-
-  const resetForm = () => {
     setName('');
   };
 
@@ -22,7 +18,10 @@ export function AddFamilyButton() {
     <>
       <Portal>
         <Modal visible={visible} onDismiss={() => setVisible(false)}>
-          <Card style={styles.modal}>
+          <Card 
+            style={[styles.modal, { backgroundColor: theme.colors.surface }]}
+            mode="outlined"
+          >
             <ScrollView>
               <Card.Title title="Create New Family" />
               <Card.Content>
@@ -31,13 +30,28 @@ export function AddFamilyButton() {
                   value={name}
                   onChangeText={setName}
                   style={styles.input}
+                  mode="outlined"
+                  theme={{
+                    colors: {
+                      background: theme.colors.surfaceVariant,
+                    },
+                  }}
                 />
-                <View style={styles.buttons}>
-                  <Button onPress={() => setVisible(false)}>Cancel</Button>
+                <View style={styles.buttonContainer}>
+                  <Button 
+                    mode="outlined" 
+                    onPress={() => setVisible(false)}
+                    style={styles.button}
+                    contentStyle={styles.buttonContent}
+                  >
+                    Cancel
+                  </Button>
                   <Button
                     mode="contained"
                     onPress={handleSubmit}
                     disabled={!name.trim()}
+                    style={styles.button}
+                    contentStyle={styles.buttonContent}
                   >
                     Create
                   </Button>
@@ -48,8 +62,8 @@ export function AddFamilyButton() {
         </Modal>
       </Portal>
       <FAB
-        icon={() => <MaterialCommunityIcons name="plus" size={24} color="white" />}
-        style={styles.fab}
+        icon="plus"
+        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
         onPress={() => setVisible(true)}
       />
     </>
@@ -69,9 +83,19 @@ const styles = StyleSheet.create({
   input: {
     marginBottom: 16,
   },
-  buttons: {
+  buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     gap: 8,
+    marginTop: 24,
+    marginBottom: 16,
+  },
+  button: {
+    borderRadius: 8,
+    minWidth: 100,
+  },
+  buttonContent: {
+    // paddingHorizontal: 8,  // Commented out to remove padding
+    // paddingVertical: 4,    // Commented out to remove padding
   },
 }); 

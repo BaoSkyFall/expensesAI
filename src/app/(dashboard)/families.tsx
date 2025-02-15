@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { ScrollView, View, StyleSheet } from 'react-native';
-import { Text, Searchbar } from 'react-native-paper';
+import { Text, Searchbar, useTheme } from 'react-native-paper';
 import { FamilyCard } from '../../components/families/FamilyCard';
 import { AddFamilyButton } from '../../components/families/AddFamilyButton';
 
 export default function FamiliesScreen() {
+  const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
 
   // Dummy data - replace with real data later
@@ -46,8 +47,8 @@ export default function FamiliesScreen() {
   );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <View style={[styles.header, { backgroundColor: theme.colors.surface }]}>
         <Searchbar
           placeholder="Search families"
           onChangeText={setSearchQuery}

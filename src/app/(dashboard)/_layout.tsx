@@ -13,7 +13,11 @@ export default function DashboardLayout() {
         },
         headerTintColor: '#fff',
         tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: 'gray',
+        tabBarInactiveTintColor: theme.colors.outline,
+        tabBarStyle: {
+          backgroundColor: theme.colors.surface,
+          borderTopColor: theme.colors.outlineVariant,
+        },
       }}
     >
       <Tabs.Screen

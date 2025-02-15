@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import { Portal, Modal, Card, TextInput, Button, List, Avatar, IconButton, Chip, Text } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useTheme } from 'react-native-paper';
 
 type Member = {
   id: string;
@@ -33,6 +34,7 @@ export function ManageMembersModal({
   const [email, setEmail] = useState('');
   const [inviting, setInviting] = useState(false);
   const windowHeight = Dimensions.get('window').height;
+  const theme = useTheme();
 
   const handleInvite = () => {
     setInviting(true);
@@ -47,19 +49,13 @@ export function ManageMembersModal({
 
   return (
     <Portal>
-      <Modal visible={visible} onDismiss={onDismiss} contentContainerStyle={styles.modalContainer}>
-        <Card style={[styles.modal, { maxHeight: windowHeight * 0.8 }]}>
-          <Card.Title 
-            title={`Manage ${familyName} Members`}
-            right={(props) => (
-              <IconButton 
-                {...props} 
-                icon="close" 
-                onPress={onDismiss}
-              />
-            )}
-          />
-          <Card.Content style={styles.content}>
+      <Modal visible={visible} onDismiss={onDismiss}>
+        <Card 
+          style={[styles.modal, { backgroundColor: theme.colors.surface }]}
+          mode="outlined"
+        >
+          <Card.Title title={`Manage ${familyName} Members`} />
+          <Card.Content>
             <View style={styles.inviteSection}>
               <TextInput
                 label="Invite Member by Email"
@@ -74,7 +70,7 @@ export function ManageMembersModal({
                     onPress={handleInvite}
                   />
                 }
-                style={styles.emailInput}
+                style={styles.input}
               />
             </View>
 
@@ -123,6 +119,26 @@ export function ManageMembersModal({
                 ))}
               </ScrollView>
             </View>
+
+            <View style={styles.buttonContainer}>
+              <Button 
+                mode="outlined"
+                onPress={onDismiss}
+                style={styles.button}
+                contentStyle={styles.buttonContent}
+              >
+                Close
+              </Button>
+              <Button 
+                mode="contained"
+                onPress={handleInvite}
+                style={styles.button}
+                contentStyle={styles.buttonContent}
+                disabled={!email}
+              >
+                Invite
+              </Button>
+            </View>
           </Card.Content>
         </Card>
       </Modal>
@@ -131,21 +147,30 @@ export function ManageMembersModal({
 }
 
 const styles = StyleSheet.create({
-  modalContainer: {
-    padding: 16,
-  },
   modal: {
-    width: '100%',
+    margin: 16,
   },
-  content: {
-    paddingHorizontal: 0,
+  input: {
+    marginBottom: 16,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 8,
+    marginTop: 24,
+    marginBottom: 16,
+  },
+  button: {
+    borderRadius: 8,
+    minWidth: 100,
+  },
+  buttonContent: {
+    // paddingHorizontal: 8,
+    // paddingVertical: 4,
   },
   inviteSection: {
     marginBottom: 24,
     paddingHorizontal: 16,
-  },
-  emailInput: {
-    marginBottom: 8,
   },
   sectionTitle: {
     marginBottom: 16,
@@ -155,7 +180,10 @@ const styles = StyleSheet.create({
     maxHeight: 400,
   },
   memberItem: {
-    paddingRight: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
   },
   memberActions: {
     flexDirection: 'row',

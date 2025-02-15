@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
-import { Text, TextInput, TextInputProps } from 'react-native-paper';
+import { Text, TextInput, TextInputProps, useTheme } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface LabeledInputProps extends Omit<TextInputProps, 'right' | 'mode' | 'theme'> {
@@ -17,12 +17,13 @@ export function LabeledInput({
   secureTextEntry,
   ...props 
 }: LabeledInputProps) {
+  const theme = useTheme();
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   return (
     <View style={[styles.container, style]}>
       <View style={styles.labelRow}>
-        <Text variant="bodySmall" style={styles.label}>
+        <Text variant="bodySmall" style={[styles.label, { color: theme.colors.onSurfaceVariant }]}>
           {label}
         </Text>
         {isPassword && (
@@ -33,7 +34,7 @@ export function LabeledInput({
             <MaterialCommunityIcons
               name={passwordVisible ? 'eye-off' : 'eye'}
               size={20}
-              color="#666"
+              color={theme.colors.onSurfaceVariant}
             />
           </Pressable>
         )}
@@ -41,18 +42,18 @@ export function LabeledInput({
       <TextInput
         {...props}
         mode="outlined"
-        style={styles.input}
-        contentStyle={styles.inputContent}
-        outlineStyle={styles.inputOutline}
+        style={[styles.input, { backgroundColor: theme.colors.surfaceVariant }]}
+        contentStyle={[styles.inputContent, { backgroundColor: theme.colors.surfaceVariant }]}
+        outlineStyle={[styles.inputOutline, { borderColor: theme.colors.outlineVariant }]}
         theme={{
           colors: {
-            background: '#f5f5f5',
+            background: theme.colors.surfaceVariant,
           },
         }}
         secureTextEntry={isPassword ? !passwordVisible : secureTextEntry}
       />
       {error && (
-        <Text variant="bodySmall" style={styles.error}>
+        <Text variant="bodySmall" style={[styles.error, { color: theme.colors.error }]}>
           {error}
         </Text>
       )}
@@ -71,7 +72,6 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   label: {
-    color: '#666666',
     marginLeft: 4,
     fontSize: 13,
   },
@@ -80,18 +80,14 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   input: {
-    backgroundColor: '#F5F5F5',
     height: 48,
   },
   inputContent: {
-    backgroundColor: '#F5F5F5',
   },
   inputOutline: {
     borderRadius: 12,
-    borderColor: '#EEEEEE',
   },
   error: {
-    color: '#FF6B6B',
     marginTop: 4,
     marginLeft: 4,
   },
