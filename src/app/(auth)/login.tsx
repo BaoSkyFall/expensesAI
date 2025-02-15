@@ -108,11 +108,11 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   linkText: {
-    color: '#666',
+    color: '#666666',
   },
   separator: {
     marginHorizontal: 8,
-    color: '#666',
+    color: '#666666',
   },
   forgotContainer: {
     flexDirection: 'row',
@@ -120,9 +120,11 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   loginButton: {
-    borderRadius: 8,
+    borderRadius: 12,
+    elevation: 0,
+    backgroundColor: '#0095FF',
   },
   loginButtonContent: {
-    paddingVertical: 8,
+    paddingVertical: 12,
   },
 }); 

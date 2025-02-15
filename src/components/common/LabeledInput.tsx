@@ -71,25 +71,27 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   label: {
-    color: '#666',
+    color: '#666666',
     marginLeft: 4,
+    fontSize: 13,
   },
   eyeIcon: {
     padding: 4,
     marginRight: 4,
   },
   input: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#F5F5F5',
     height: 48,
   },
   inputContent: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#F5F5F5',
   },
   inputOutline: {
-    borderRadius: 8,
+    borderRadius: 12,
+    borderColor: '#EEEEEE',
   },
   error: {
-    color: '#dc2626',
+    color: '#FF6B6B',
     marginTop: 4,
     marginLeft: 4,
   },

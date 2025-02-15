@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { Stack, usePathname, router } from 'expo-router';
@@ -9,15 +9,20 @@ export default function AuthLayout() {
   const pathname = usePathname();
   const showSkip = pathname === '/(auth)/';
 
-  // If user is already logged in, redirect to dashboard
-  if (user) {
-    router.replace('/(dashboard)/');
-    return null;
-  }
+  useEffect(() => {
+    if (user) {
+      router.replace('/(dashboard)/');
+    }
+  }, [user]);
 
   const handleSkip = () => {
     router.push('/(auth)/login');
   };
+
+  // Don't render anything while redirecting
+  if (user) {
+    return null;
+  }
 
   return (
     <>
