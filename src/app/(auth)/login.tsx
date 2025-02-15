@@ -76,11 +76,7 @@ export default function LoginScreen() {
               Forgot Password?
             </Button>
           </Link>
-          <Link href="/reset" asChild>
-            <Button mode="text" compact>
-              Reset
-            </Button>
-          </Link>
+     
         </View>
 
         <Button

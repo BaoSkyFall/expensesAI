@@ -24,7 +24,7 @@ export function useAuth() {
       setLoading(false);
 
       // Handle auth state changes
-      if (!session && !pathname?.includes('login') && !pathname?.includes('register')) {
+      if (!session && !pathname?.includes('login') && !pathname?.includes('register') && !pathname?.includes('forgot-password')) {
         router.replace('/(auth)/');
       } 
     });
@@ -65,6 +65,18 @@ export function useAuth() {
     }
   };
 
+  const resetPassword = async (email: string) => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: 'exp://localhost:19000/reset-password',
+      });
+      if (error) throw error;
+    } catch (error) {
+      console.error('Reset password error:', error);
+      throw error;
+    }
+  };
+
   return {
     user,
     session,
@@ -72,5 +84,6 @@ export function useAuth() {
     signUp,
     signIn,
     signOut,
+    resetPassword,
   };
 } 

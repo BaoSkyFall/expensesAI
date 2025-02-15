@@ -56,6 +56,15 @@ export default function DashboardLayout() {
           ),
         }}
       />
+       <Tabs.Screen
+        name="details"
+        options={{
+          title: 'Details',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="information" size={size} color={color} />
+          ),
+        }}
+      />
       <Tabs.Screen
         name="settings"
         options={{
