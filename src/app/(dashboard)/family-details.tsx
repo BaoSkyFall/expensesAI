@@ -1,0 +1,64 @@
+import React from 'react';
+import { View, StyleSheet, ScrollView } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { Text, useTheme } from 'react-native-paper';
+import { FamilyStats } from '../../components/families/FamilyStats';
+import { FamilyExpenseChart } from '../../components/families/FamilyExpenseChart';
+import { FamilyMembersList } from '../../components/families/FamilyMembersList';
+import { FamilyExpenseList } from '../../components/families/FamilyExpenseList';
+
+export default function FamilyDetailsScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const theme = useTheme();
+
+  // TODO: Fetch family details from API
+  const familyDetails = {
+    id,
+    name: 'Smith Family',
+    totalExpenses: 1250,
+    members: [
+      { id: '1', name: 'John Smith', role: 'admin', email: 'john@example.com', status: 'active' },
+      { id: '2', name: 'Jane Smith', role: 'member', email: 'jane@example.com', status: 'active' },
+    ],
+    monthlyBudget: 2000,
+    expenses: [
+      { id: '1', amount: 50, category: 'Food', date: '2024-01-15', member: 'John Smith' },
+      { id: '2', amount: 30, category: 'Transport', date: '2024-01-14', member: 'Jane Smith' },
+    ],
+  };
+
+  return (
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
+        <Text variant="headlineMedium">{familyDetails.name}</Text>
+        <Text variant="bodyLarge" style={{ color: theme.colors.error }}>
+          Total Expenses: ${familyDetails.totalExpenses}
+        </Text>
+      </View>
+
+      <FamilyStats
+        totalExpenses={familyDetails.totalExpenses}
+        monthlyBudget={familyDetails.monthlyBudget}
+        membersCount={familyDetails.members.length}
+      />
+
+      <FamilyExpenseChart familyId={id} />
+      
+      <FamilyMembersList members={familyDetails.members} />
+      
+      <FamilyExpenseList expenses={familyDetails.expenses} />
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  header: {
+    padding: 16,
+    backgroundColor: '#fff',
+    marginBottom: 8,
+  },
+}); 

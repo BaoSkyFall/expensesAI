@@ -1,10 +1,11 @@
 {
   "expo": {
-    "scheme": "acme",
+    "scheme": "expenseai",
     "plugins": [
       "expo-router"
     ],
     "name": "ExpenseAI",
-    "slug": "ExpenseAI"
+    "slug": "ExpenseAI",
+    "newArchEnabled": true
   }
 }
