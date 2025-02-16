@@ -3,34 +3,15 @@ import { ScrollView, View, StyleSheet } from 'react-native';
 import { Text, Searchbar, useTheme } from 'react-native-paper';
 import { FamilyCard } from '../../components/families/FamilyCard';
 import { AddFamilyButton } from '../../components/families/AddFamilyButton';
+import { useFamilies } from '../../hooks/useFamilies';
+import LoadingScreen from '../../components/common/LoadingScreen';
 
 export default function FamiliesScreen() {
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
+  const { families, loading } = useFamilies();
 
-  // Dummy data - replace with real data later
-  const families = [
-    {
-      id: '1',
-      name: 'Smith Family',
-      totalExpenses: 1250,
-      members: [
-        { id: '1', name: 'John Smith', role: 'admin' as const },
-        { id: '2', name: 'Jane Smith', role: 'member' as const },
-        { id: '3', name: 'Jimmy Smith', role: 'member' as const },
-        { id: '4', name: 'Jenny Smith', role: 'member' as const },
-      ],
-    },
-    {
-      id: '2',
-      name: 'Johnson Family',
-      totalExpenses: 980,
-      members: [
-        { id: '5', name: 'Mike Johnson', role: 'admin' as const },
-        { id: '6', name: 'Sarah Johnson', role: 'member' as const },
-      ],
-    },
-  ];
+  if (loading) return <LoadingScreen />;
 
   const handleManageMembers = (familyId: string) => {
     // TODO: Implement member management
