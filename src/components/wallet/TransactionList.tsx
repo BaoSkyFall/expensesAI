@@ -54,7 +54,7 @@ export function TransactionList({ transactions = [], loading }: TransactionListP
               color: item.type === 'credit' ? theme.colors.primary : theme.colors.error,
             }}
           >
-            {item.type === 'credit' ? '+' : '-'}${item.amount.toFixed(2)}
+            {item.type === 'credit' ? '+ ' : '- '}{item.amount.toLocaleString()}đ
           </Text>
         )}
       />
