@@ -49,7 +49,7 @@ export function ExpenseList({ selectedCategory, searchQuery, timeFilter }: Expen
   const filteredExpenses = expenses.filter((expense) => {
     const matchesCategory = !selectedCategory || expense.categoryId === selectedCategory;
     const matchesSearch = !searchQuery || 
-      expense.description.toLowerCase().includes(searchQuery.toLowerCase());
+      expense?.description?.toLowerCase()?.includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 

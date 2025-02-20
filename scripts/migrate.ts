@@ -67,29 +67,6 @@ const EXPENSE_CATEGORIES: ExpenseCategory[] = [
   },
 ];
 
-const mockData = {
-  families: [
-    {
-      name: 'Sú Family',
-      members: [
-        { email: 'baoit128@gmail.com', role: 'admin' as const },
-      ],
-    },
-  ],
-  expenses: [
-    {
-      amount: 50000,
-      description: 'Groceries',
-      created_at: new Date().toISOString(),
-    },
-    {
-      amount: 30000,
-      description: 'Transport',
-      created_at: new Date().toISOString(),
-    },
-  ],
-};
-
 async function migrateData() {
   try {
     console.log('Starting migration...');
@@ -114,119 +91,109 @@ async function migrateData() {
     }
     console.log('Got user:', user.email);
 
-    // Create default categories first
-    console.log('Creating default categories...');
-    const defaultCategories = EXPENSE_CATEGORIES.map(cat => ({
-      ...cat,
-      created_by: user.id,  // Set the creator
-      is_default: true,     // Mark as default
-      family_id: null       // No family association for defaults
-    }));
+    // Check if categories exist
+    const { data: existingCategories } = await supabase
+      .from('expense_categories')
+      .select('*')
+      .eq('is_default', true);
 
-    // Insert categories one by one to avoid conflicts
-    const categories = [];
-    for (const category of defaultCategories) {
-      const { data: catData, error: catError } = await supabase
-        .from('expense_categories')
-        .insert(category)
-        .select()
-        .single();
-
-      if (catError) {
-        console.error('Category creation error:', catError);
-        continue;
-      }
-      categories.push(catData);
-      console.log('Created category:', category.name);
-    }
-
-    // 2. Create families
-    console.log('Creating families...');
-    for (const family of mockData.families) {
-      try {
-        // Create family
-        const { data: familyData, error: familyError } = await supabase
-          .from('families')
+    if (!existingCategories || existingCategories.length === 0) {
+      // Create default categories
+      console.log('Creating default categories...');
+      const categories = [];
+      for (const category of EXPENSE_CATEGORIES) {
+        const { data: catData, error: catError } = await supabase
+          .from('expense_categories')
           .insert({
-            name: family.name,
+            ...category,
             created_by: user.id,
+            is_default: true
           })
           .select()
           .single();
 
-        if (familyError) {
-          console.error('Family creation error:', familyError);
+        if (catError) {
+          console.error('Category creation error:', catError);
           continue;
         }
-        console.log('Created family:', familyData.name);
+        categories.push(catData);
+        console.log('Created category:', category.name);
+      }
 
-        // Add members
-        for (const member of family.members) {
-          // Get member's profile
-          const { data: memberProfile, error: profileError } = await supabase
-            .from('profiles')
-            .select('id')
-            .eq('id', user.id)
-            .single();
+      // Create a test family
+      const { data: familyData, error: familyError } = await supabase
+        .from('families')
+        .insert({
+          name: 'My Family',
+          created_by: user.id
+        })
+        .select()
+        .single();
 
-          if (profileError) {
-            console.error('Profile fetch error:', profileError);
-            continue;
-          }
+      if (familyError) {
+        console.error('Family creation error:', familyError);
+        return;
+      }
+      const createdFamily = familyData;
+      console.log('Created family:', createdFamily.name);
 
-          // Add member to family
-          const { error: addMemberError } = await supabase
-            .from('family_members')
-            .insert({
-              family_id: familyData.id,
-              user_id: memberProfile.id,
-              role: member.role,
-              status: 'active',
-            });
+      // Add member (yourself) to family
+      const { error: addMemberError } = await supabase
+        .from('family_members')
+        .insert({
+          family_id: createdFamily.id,
+          user_id: user.id,
+          role: 'admin',
+          status: 'active'
+        });
 
-          if (addMemberError) {
-            console.error('Member addition error:', addMemberError);
-            continue;
-          }
-          console.log('Added member:', member.email);
-        }
+      if (addMemberError) {
+        console.error('Member addition error:', addMemberError);
+        return;
+      }
+      console.log('Added member:', user.email);
 
-        // Create wallet for family
-        const { error: walletError } = await supabase
-          .from('wallets')
+      // Create wallet for family
+      const { error: walletError } = await supabase
+        .from('wallets')
+        .insert({
+          balance: 1000000,
+          user_id: user.id,
+          family_id: createdFamily.id
+        });
+
+      if (walletError) {
+        console.error('Wallet creation error:', walletError);
+        return;
+      }
+      console.log('Created wallet for family');
+
+      // Create some test expenses
+      const mockExpenses = [
+        { amount: 50000, description: 'Grocery shopping' },
+        { amount: 30000, description: 'Gas' },
+        { amount: 100000, description: 'New shoes' }
+      ];
+
+      for (const [index, expense] of mockExpenses.entries()) {
+        const category = categories[index % categories.length];
+        const { error: expenseError } = await supabase
+          .from('expenses')
           .insert({
-            balance: 1000000, // 1M VND initial balance
+            ...expense,
+            category_id: category.id,
             user_id: user.id,
-            family_id: familyData.id,
+            family_id: createdFamily.id
           });
 
-        if (walletError) {
-          console.error('Wallet creation error:', walletError);
+        if (expenseError) {
+          console.error('Expense creation error:', expenseError);
           continue;
         }
-        console.log('Created wallet for family');
-
-        // Create expenses for family
-        for (const [index, expense] of mockData.expenses.entries()) {
-          const category = categories[index % categories.length];
-          const { error: expenseError } = await supabase
-            .from('expenses')
-            .insert({
-              ...expense,
-              category_id: category.id,
-              user_id: user.id,
-              family_id: familyData.id,
-            });
-
-          if (expenseError) {
-            console.error('Expense creation error:', expenseError);
-            continue;
-          }
-          console.log('Created expense:', expense.description);
-        }
-      } catch (error) {
-        console.error('Error processing family:', error);
+        console.log('Created expense:', expense.description);
       }
+    } else {
+      console.log('Categories already exist, skipping creation');
     }
 
     console.log('Migration completed successfully');

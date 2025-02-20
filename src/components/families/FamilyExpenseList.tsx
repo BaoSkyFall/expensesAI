@@ -30,9 +30,9 @@ export function FamilyExpenseList({ expenses }: FamilyExpenseListProps) {
     .filter(expense => {
       const searchLower = searchQuery.toLowerCase();
       return (
-        expense.category.toLowerCase().includes(searchLower) ||
-        expense.member.toLowerCase().includes(searchLower) ||
-        expense.amount.toString().includes(searchLower)
+        expense?.category?.toLowerCase()?.includes(searchLower) ||
+        expense?.member?.toLowerCase()?.includes(searchLower) ||
+        expense?.amount?.toString()?.includes(searchLower)
       );
     })
     .sort((a, b) => {

@@ -24,7 +24,7 @@ export default function FamiliesScreen() {
   };
 
   const filteredFamilies = families.filter(family =>
-    family.name.toLowerCase().includes(searchQuery.toLowerCase())
+    family?.name?.toLowerCase()?.includes(searchQuery.toLowerCase())
   );
 
   return (

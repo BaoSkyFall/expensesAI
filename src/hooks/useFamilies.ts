@@ -21,7 +21,6 @@ export function useFamilies() {
           profiles (
             id,
             full_name,
-            email,
             avatar_url
           )
         ),
@@ -33,18 +32,20 @@ export function useFamilies() {
       .then(({ data, error }) => {
         if (error) console.error('Error fetching families:', error);
         else {
-          const processedFamilies = data?.map(family => ({
-            ...family,
+          console.log('data:', JSON.stringify(data, null, 2))
+          const processedFamilies = data?.map((family:any) => ({
+            id: family.id,
+            name: family.name,
             members: family.family_members.map(member => ({
               id: member.profiles.id,
               name: member.profiles.full_name,
-              email: member.profiles.email,
               role: member.role,
               status: member.status,
               avatar: member.profiles.avatar_url
             })),
             totalExpenses: family.expenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0
           }));
+          console.log('processedFamilies:', JSON.stringify(processedFamilies, null, 2))
           setFamilies(processedFamilies || []);
         }
         setLoading(false);

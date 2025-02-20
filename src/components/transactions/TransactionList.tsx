@@ -50,7 +50,7 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
       bills: 'file-document',
       default: 'currency-usd',
     };
-    return icons[category.toLowerCase()] || icons.default;
+    return icons[category?.toLowerCase()] || icons.default;
   };
 
   return (

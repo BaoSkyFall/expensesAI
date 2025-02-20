@@ -26,8 +26,8 @@ export function FamilyMembersList({ members }: FamilyMembersListProps) {
   const filteredMembers = members
     .filter(member => {
       const matchesSearch = 
-        member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        member.email.toLowerCase().includes(searchQuery.toLowerCase());
+        member?.name?.toLowerCase()?.includes(searchQuery.toLowerCase()) ||
+        member?.email?.toLowerCase()?.includes(searchQuery.toLowerCase());
       
       const matchesStatus = 
         filterStatus === 'all' || member.status === filterStatus;
