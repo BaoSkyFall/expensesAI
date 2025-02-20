@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { List, Text, useTheme, Card, Divider } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { EXPENSE_CATEGORIES } from '../../constants/categories';
+import { useExpenses } from '../../hooks/useExpenses';
+import { formatCurrency } from '../../utils/currency';
 
 type Expense = {
   id: number;
@@ -16,40 +18,37 @@ type ExpenseListProps = {
   selectedCategory: string | null;
   searchQuery: string;
   timeFilter: string;
+  familyId: string | null;
+  onRefresh: () => void;
 };
 
-export function ExpenseList({ selectedCategory, searchQuery, timeFilter }: ExpenseListProps) {
+export function ExpenseList({ selectedCategory, searchQuery, timeFilter, onRefresh, familyId }: ExpenseListProps) {
   const theme = useTheme();
-
-  // Dummy data - replace with real data later
-  const expenses: Expense[] = [
-    {
-      id: 1,
-      amount: 50,
-      description: 'Grocery shopping',
-      categoryId: '1', // Food
-      date: '2024-01-15',
-    },
-    {
-      id: 2,
-      amount: 30,
-      description: 'Gas',
-      categoryId: '3', // Transport
-      date: '2024-01-14',
-    },
-    {
-      id: 3,
-      amount: 100,
-      description: 'New shoes',
-      categoryId: '2', // Shopping
-      date: '2024-01-13',
-    },
-  ];
+  const { expenses, loading } = useExpenses(familyId);
 
   const filteredExpenses = expenses.filter((expense) => {
-    const matchesCategory = !selectedCategory || expense.categoryId === selectedCategory;
+    const matchesCategory = !selectedCategory || expense.category_id === selectedCategory;
     const matchesSearch = !searchQuery || 
       expense?.description?.toLowerCase()?.includes(searchQuery.toLowerCase());
+    
+    if (timeFilter === 'week') {
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      return matchesCategory && matchesSearch && new Date(expense.created_at) >= weekAgo;
+    }
+    
+    if (timeFilter === 'month') {
+      const monthAgo = new Date();
+      monthAgo.setMonth(monthAgo.getMonth() - 1);
+      return matchesCategory && matchesSearch && new Date(expense.created_at) >= monthAgo;
+    }
+    
+    if (timeFilter === 'year') {
+      const yearAgo = new Date();
+      yearAgo.setFullYear(yearAgo.getFullYear() - 1);
+      return matchesCategory && matchesSearch && new Date(expense.created_at) >= yearAgo;
+    }
+    
     return matchesCategory && matchesSearch;
   });
 
@@ -57,14 +56,14 @@ export function ExpenseList({ selectedCategory, searchQuery, timeFilter }: Expen
     return EXPENSE_CATEGORIES.find(cat => cat.id === categoryId);
   };
 
-  const renderExpenseItem = ({ item }: { item: Expense }) => {
-    const category = getCategory(item.categoryId);
+  const renderExpenseItem = ({ item }) => {
+    const category = item.expense_categories;
     
     return (
       <>
         <List.Item
           title={item.description}
-          description={`${category?.name} • ${item.date}`}
+          description={`${category?.name} • ${new Date(item.created_at).toLocaleDateString()}`}
           left={(props) => (
             <MaterialCommunityIcons
               name={category?.icon || 'help-circle'}
@@ -75,7 +74,7 @@ export function ExpenseList({ selectedCategory, searchQuery, timeFilter }: Expen
           )}
           right={() => (
             <Text variant="titleMedium" style={{ color: theme.colors.error }}>
-              -${item.amount}
+              -{formatCurrency(item.amount)}
             </Text>
           )}
         />
@@ -83,6 +82,14 @@ export function ExpenseList({ selectedCategory, searchQuery, timeFilter }: Expen
       </>
     );
   };
+
+  if (loading) {
+    return (
+      <Card style={styles.card}>
+        <ActivityIndicator style={styles.loading} />
+      </Card>
+    );
+  }
 
   return (
     <Card style={styles.card}>
@@ -108,5 +115,8 @@ const styles = StyleSheet.create({
   emptyContainer: {
     padding: 16,
     alignItems: 'center',
+  },
+  loading: {
+    marginTop: 16,
   },
 }); 

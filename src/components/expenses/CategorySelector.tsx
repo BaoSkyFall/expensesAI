@@ -1,16 +1,49 @@
-import React from 'react';
-import { View, StyleSheet, ScrollView, Pressable, TouchableOpacity } from 'react-native';
-import { Text, useTheme, MD3Theme } from 'react-native-paper';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { Text, useTheme, ActivityIndicator } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { EXPENSE_CATEGORIES, ExpenseCategoryType } from '../../constants/categories';
+import { supabase } from '../../lib/supabase';
+
+type ExpenseCategory = {
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
+};
 
 type CategorySelectorProps = {
-  selectedCategory: string | null;
-  onSelectCategory: (category: ExpenseCategoryType) => void;
+  selectedCategory: ExpenseCategory | null;
+  onSelectCategory: (category: ExpenseCategory) => void;
 };
 
 export function CategorySelector({ selectedCategory, onSelectCategory }: CategorySelectorProps) {
   const theme = useTheme();
+  const [categories, setCategories] = useState<ExpenseCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const { data, error } = await supabase
+          .from('expense_categories')
+          .select('*')
+          .order('name');
+
+        if (error) throw error;
+        setCategories(data || []);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchCategories();
+  }, []);
+
+  if (loading) {
+    return <ActivityIndicator style={styles.loading} />;
+  }
 
   return (
     <ScrollView 
@@ -18,13 +51,13 @@ export function CategorySelector({ selectedCategory, onSelectCategory }: Categor
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.container}
     >
-      {EXPENSE_CATEGORIES.map((category) => (
+      {categories.map((category) => (
         <TouchableOpacity
           key={category.id}
           style={[
             styles.category,
             { 
-              backgroundColor: selectedCategory === category.id 
+              backgroundColor: selectedCategory?.id === category.id 
                 ? theme.colors.primary 
                 : theme.colors.surfaceVariant 
             }
@@ -34,14 +67,14 @@ export function CategorySelector({ selectedCategory, onSelectCategory }: Categor
           <MaterialCommunityIcons
             name={category.icon}
             size={24}
-            color={selectedCategory === category.id ? '#fff' : category.color}
+            color={selectedCategory?.id === category.id ? '#fff' : category.color}
           />
           <Text
             variant="labelMedium"
             style={[
               styles.categoryText,
               { 
-                color: selectedCategory === category.id 
+                color: selectedCategory?.id === category.id 
                   ? '#fff' 
                   : theme.colors.onBackground 
               },
@@ -70,5 +103,8 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     marginTop: 4,
+  },
+  loading: {
+    padding: 16,
   },
 }); 

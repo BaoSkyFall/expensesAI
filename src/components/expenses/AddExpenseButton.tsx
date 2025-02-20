@@ -1,28 +1,46 @@
-import { Portal, FAB, Modal, Card, TextInput, Button, Text } from 'react-native-paper';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Portal, FAB, Modal, Card, TextInput, Button } from 'react-native-paper';
 import { CategorySelector } from './CategorySelector';
-import { EXPENSE_CATEGORIES, ExpenseCategoryType } from '../../constants/categories';
-import React from 'react';
-import { useTheme } from 'react-native-paper';
+import { useExpenses } from '../../hooks/useExpenses';
+import { ExpenseCategoryType } from '../../constants/categories';
 
-export function AddExpenseButton() {
+export function AddExpenseButton({ onSuccess, familyId }: { 
+  onSuccess?: () => void;
+  familyId: string | null;
+}) {
   const [visible, setVisible] = useState(false);
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<ExpenseCategoryType | null>(null);
-  const theme = useTheme();
+  const { addExpense } = useExpenses(familyId);
 
   const handleSubmit = async () => {
-    // TODO: Implement expense creation with category
-    console.log({
-      amount,
-      description,
-      category: selectedCategory,
-    });
-    setVisible(false);
-    resetForm();
+    try {
+      if (!familyId) {
+        console.error('No family selected');
+        return;
+      }
+
+      const numericAmount = parseFloat(amount);
+      if (isNaN(numericAmount) || !selectedCategory) {
+        console.error('Invalid amount or category');
+        return;
+      }
+
+      await addExpense({
+        amount: numericAmount,
+        description,
+        category_id: selectedCategory.id,
+        family_id: familyId
+      });
+
+      onSuccess?.();
+      setVisible(false);
+      resetForm();
+    } catch (error) {
+      console.error('Failed to add expense:', error);
+    }
   };
 
   const resetForm = () => {
@@ -35,12 +53,9 @@ export function AddExpenseButton() {
     <>
       <Portal>
         <Modal visible={visible} onDismiss={() => setVisible(false)}>
-          <Card 
-            style={[styles.modal, { backgroundColor: theme.colors.surface }]}
-            mode="outlined"
-          >
+          <Card style={styles.modal}>
             <ScrollView>
-              <Card.Title title="Add New Expense" />
+              <Card.Title title="Add Expense" />
               <Card.Content>
                 <TextInput
                   label="Amount"
@@ -48,12 +63,6 @@ export function AddExpenseButton() {
                   onChangeText={setAmount}
                   keyboardType="numeric"
                   style={styles.input}
-                  mode="outlined"
-                  theme={{
-                    colors: {
-                      background: theme.colors.surfaceVariant,
-                    },
-                  }}
                 />
                 <TextInput
                   label="Description"
@@ -61,26 +70,16 @@ export function AddExpenseButton() {
                   onChangeText={setDescription}
                   style={styles.input}
                 />
-                <Text style={styles.label}>Category</Text>
                 <CategorySelector
-                  selectedCategory={selectedCategory?.id || null}
+                  selectedCategory={selectedCategory}
                   onSelectCategory={setSelectedCategory}
                 />
-                <View style={styles.buttonContainer}>
-                  <Button 
-                    mode="outlined" 
-                    onPress={() => setVisible(false)}
-                    style={styles.button}
-                    contentStyle={styles.buttonContent}
-                  >
-                    Cancel
-                  </Button>
-                  <Button 
-                    mode="contained" 
+                <View style={styles.buttons}>
+                  <Button onPress={() => setVisible(false)}>Cancel</Button>
+                  <Button
+                    mode="contained"
                     onPress={handleSubmit}
-                    style={styles.button}
-                    contentStyle={styles.buttonContent}
-                    disabled={!amount || !description || !selectedCategory}
+                    disabled={!amount || !description || !selectedCategory || !familyId}
                   >
                     Save
                   </Button>
@@ -92,42 +91,32 @@ export function AddExpenseButton() {
       </Portal>
       <FAB
         icon="plus"
-        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
+        style={styles.fab}
         onPress={() => setVisible(true)}
+        disabled={!familyId}
       />
     </>
   );
 }
 
 const styles = StyleSheet.create({
+  modal: {
+    margin: 20,
+    backgroundColor: 'white',
+  },
+  input: {
+    marginBottom: 16,
+  },
+  buttons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 8,
+    marginTop: 16,
+  },
   fab: {
     position: 'absolute',
     margin: 16,
     right: 0,
     bottom: 0,
-  },
-  modal: {
-    margin: 16,
-  },
-  input: {
-    marginBottom: 16,
-  },
-  label: {
-    marginBottom: 8,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 8,
-    marginTop: 24,
-    marginBottom: 16,
-  },
-  button: {
-    borderRadius: 8,
-    minWidth: 80,
-  },
-  buttonContent: {
-    // paddingHorizontal: 2,
-    // paddingVertical: 2,
   },
 }); 
