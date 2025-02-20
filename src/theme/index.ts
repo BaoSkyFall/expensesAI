@@ -5,21 +5,23 @@ export const theme = {
   colors: {
     ...MD3LightTheme.colors,
     // Main colors
-    primary: '#0095FF',
-    secondary: '#E6F4FF',
-    error: '#FF6B6B',
+    primary: '#0066FF',
+    secondary: '#F5F6F8',
+    error: '#FF4D4D',
+    success: '#00C48C',
     
     // Backgrounds
-    background: '#FFFFFF',
+    background: '#F5F6F8',
     surface: '#FFFFFF',
-    surfaceVariant: '#F5F5F5',
+    surfaceVariant: '#F5F6F8',
     
     // Text colors
     onSurface: '#1A1A1A',
-    onSurfaceVariant: '#666666',
-    outline: '#666666',
+    onSurfaceVariant: '#6B7280',
+    outline: '#E5E7EB',
     
     // Border colors
-    outlineVariant: '#EEEEEE',
+    outlineVariant: '#F3F4F6',
   },
+  roundness: 16,
 }; 

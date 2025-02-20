@@ -10,25 +10,21 @@ export function WalletSummary() {
     <View style={styles.container}>
       <Card style={styles.card}>
         <Card.Content>
-          <View style={styles.row}>
-            <MaterialCommunityIcons 
-              name="wallet" 
-              size={24} 
-              color={theme.colors.primary} 
-            />
-            <View style={styles.textContainer}>
-              <Text variant="titleMedium">Current Balance</Text>
-              <Text 
-                variant="headlineMedium" 
-                style={{ color: theme.colors.primary }}
-              >
-                {formatCurrency(2450)}
-              </Text>
+          <Text style={styles.headerText}>Your growth this week</Text>
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>$2,450</Text>
+              <Text style={styles.statLabel}>balance</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Text style={[styles.statValue, { color: theme.colors.primary }]}>21</Text>
+              <Text style={styles.statLabel}>transactions</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Text style={[styles.statValue, { color: theme.colors.success }]}>15</Text>
+              <Text style={styles.statLabel}>savings</Text>
             </View>
           </View>
-          <Text variant="bodyMedium" style={styles.label}>
-            Monthly Expenses: {formatCurrency(123456)}
-          </Text>
         </Card.Content>
       </Card>
     </View>
@@ -38,19 +34,31 @@ export function WalletSummary() {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    paddingTop: 8,
   },
   card: {
-    backgroundColor: '#fff',
+    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
   },
-  row: {
+  headerText: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginBottom: 24,
+  },
+  statsContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
-  textContainer: {
-    marginLeft: 16,
+  statItem: {
+    alignItems: 'center',
   },
-  label: {
-    marginTop: 8,
+  statValue: {
+    fontSize: 24,
+    fontWeight: '700',
+    marginBottom: 4,
   },
+  statLabel: {
+    fontSize: 14,
+    color: '#6B7280',
+  }
 }); 

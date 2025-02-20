@@ -1,3 +1,4 @@
+import React from 'react';
 import { Tabs } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -13,7 +14,7 @@ export default function DashboardLayout() {
         },
         headerTintColor: '#fff',
         tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.outline,
+        tabBarInactiveTintColor: theme.colors.backdrop,
         tabBarStyle: {
           backgroundColor: theme.colors.surface,
           borderTopColor: theme.colors.outlineVariant,
@@ -53,15 +54,6 @@ export default function DashboardLayout() {
           title: 'Families',
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="account-group" size={size} color={color} />
-          ),
-        }}
-      />
-       <Tabs.Screen
-        name="details"
-        options={{
-          title: 'Details',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="information" size={size} color={color} />
           ),
         }}
       />

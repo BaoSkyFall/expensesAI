@@ -1,5 +1,6 @@
 import { Searchbar as PaperSearchbar } from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
 
 export function Searchbar({ value, onChangeText, ...props }) {
   const theme = useTheme();

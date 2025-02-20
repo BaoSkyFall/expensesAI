@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { EXPENSE_CATEGORIES } from '../../constants/categories';
 import { useExpenses } from '../../hooks/useExpenses';
 import { formatCurrency } from '../../utils/currency';
+import { cardStyles } from '../../styles/cards';
 
 type Expense = {
   id: number;
@@ -85,14 +86,14 @@ export function ExpenseList({ selectedCategory, searchQuery, timeFilter, onRefre
 
   if (loading) {
     return (
-      <Card style={styles.card}>
+      <Card style={[styles.card, cardStyles.card]}>
         <ActivityIndicator style={styles.loading} />
       </Card>
     );
   }
 
   return (
-    <Card style={styles.card}>
+    <Card style={[styles.card, cardStyles.card]}>
       <FlatList
         data={filteredExpenses}
         renderItem={renderExpenseItem}

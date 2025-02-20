@@ -1,14 +1,15 @@
 import React, { useState, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, Searchbar, SegmentedButtons } from 'react-native-paper';
+import { Text, useTheme, SegmentedButtons } from 'react-native-paper';
 import { ExpenseList } from '../../components/expenses/ExpenseList';
 import { AddExpenseButton } from '../../components/expenses/AddExpenseButton';
 import { CategoryFilter } from '../../components/expenses/CategoryFilter';
 import { useExpenses } from '../../hooks/useExpenses';
 import { useFamilies } from '../../hooks/useFamilies';
-import { FamilySelector } from '../../components/families/FamilySelector';
+import { Searchbar } from '../../components/common/SearchBar';
 
 export default function ExpensesScreen() {
+  const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [timeFilter, setTimeFilter] = useState('week');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -21,20 +22,40 @@ export default function ExpensesScreen() {
   }, [refreshExpenses]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <FamilySelector
-          value={selectedFamilyId}
-          onChange={setSelectedFamilyId}
-          families={families}
-          style={styles.familySelector}
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      {/* Family Selector */}
+      <View style={styles.familyToggle}>
+        <SegmentedButtons
+          value={selectedFamilyId ? 'family' : 'personal'}
+          onValueChange={(value) => setSelectedFamilyId(value === 'family' ? families[0]?.id : null)}
+          buttons={[
+            { 
+              value: 'personal', 
+              label: 'Personal',
+              icon: 'account'
+            },
+            { 
+              value: 'family', 
+              label: 'Sú Family',
+              icon: 'account-group'
+            },
+          ]}
+          style={styles.familySegment}
         />
+      </View>
+
+      {/* Search Bar */}
+      <View style={styles.searchContainer}>
         <Searchbar
           placeholder="Search expenses"
           onChangeText={setSearchQuery}
           value={searchQuery}
           style={styles.searchBar}
         />
+      </View>
+
+      {/* Time Filter */}
+      <View style={styles.timeFilterContainer}>
         <SegmentedButtons
           value={timeFilter}
           onValueChange={setTimeFilter}
@@ -43,13 +64,17 @@ export default function ExpensesScreen() {
             { value: 'month', label: 'Month' },
             { value: 'year', label: 'Year' },
           ]}
-          style={styles.segmentedButtons}
-        />
-        <CategoryFilter
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
+          style={styles.timeFilter}
         />
       </View>
+
+      {/* Category Filter */}
+      <CategoryFilter
+        selectedCategory={selectedCategory}
+        onSelectCategory={setSelectedCategory}
+      />
+
+      {/* Expense List */}
       <ExpenseList
         selectedCategory={selectedCategory}
         searchQuery={searchQuery}
@@ -57,6 +82,8 @@ export default function ExpensesScreen() {
         onRefresh={handleRefresh}
         familyId={selectedFamilyId}
       />
+
+      {/* Add Button */}
       <AddExpenseButton 
         onSuccess={handleRefresh} 
         familyId={selectedFamilyId}
@@ -68,19 +95,29 @@ export default function ExpensesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
-  header: {
-    padding: 16,
-    backgroundColor: '#fff',
+  familyToggle: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
-  familySelector: {
-    marginBottom: 16,
+  familySegment: {
+    backgroundColor: '#F3F4F6',
+    borderRadius: 24,
+  },
+  searchContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 12,
   },
   searchBar: {
-    marginBottom: 16,
+    borderRadius: 24,
+    backgroundColor: '#F3F4F6',
   },
-  segmentedButtons: {
-    marginBottom: 16,
+  timeFilterContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+  },
+  timeFilter: {
+    backgroundColor: '#F3F4F6',
+    borderRadius: 24,
   },
 }); 

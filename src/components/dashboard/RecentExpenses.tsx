@@ -1,5 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import { Card, Text, List, useTheme } from 'react-native-paper';
+import { cardStyles } from '../../styles/cards';
 
 export function RecentExpenses() {
   const theme = useTheme();
@@ -12,9 +13,9 @@ export function RecentExpenses() {
   ];
 
   return (
-    <Card style={styles.card}>
+    <Card style={[styles.card, cardStyles.card]}>
       <Card.Content>
-        <Text variant="titleMedium" style={styles.title}>Recent Expenses</Text>
+        <Text variant="titleMedium" style={cardStyles.title}>Recent Expenses</Text>
         {recentExpenses.map((expense) => (
           <List.Item
             key={expense.id}
@@ -36,8 +37,5 @@ const styles = StyleSheet.create({
   card: {
     margin: 16,
     marginTop: 8,
-  },
-  title: {
-    marginBottom: 8,
   },
 }); 

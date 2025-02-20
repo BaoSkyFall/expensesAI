@@ -4,6 +4,7 @@ import { Card, Text, Avatar, Chip, Button, useTheme } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ManageMembersModal } from './ManageMembersModal';
 import { formatCurrency } from '../../utils/currency';
+import { cardStyles } from '../../styles/cards';
 
 type FamilyMember = {
   id: string;
@@ -43,10 +44,7 @@ export function FamilyCard({ name, members, totalExpenses, onManageMembers, onVi
 
   return (
     <>
-      <Card 
-        style={[styles.card, { backgroundColor: theme.colors.surface }]}
-        mode="outlined"
-      >
+      <Card style={[styles.card, cardStyles.card]}>
         <Card.Content>
           <View style={styles.header}>
             <View>
@@ -120,8 +118,6 @@ export function FamilyCard({ name, members, totalExpenses, onManageMembers, onVi
 const styles = StyleSheet.create({
   card: {
     marginBottom: 16,
-    elevation: 0,
-    borderColor: '#EEEEEE',
   },
   header: {
     flexDirection: 'row',
