@@ -66,7 +66,7 @@ export function FamilyCard({ name, members, totalExpenses, onManageMembers, onVi
               {members.slice(0, 3).map((member) => (
                 <Avatar.Text
                   key={member.id}
-                  label={member.name.substring(0, 2)}
+                  label={member?.name?.substring(0, 1)?.toUpperCase()}
                   size={40}
                   style={styles.avatar}
                 />

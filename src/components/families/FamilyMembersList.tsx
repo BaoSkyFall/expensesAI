@@ -132,7 +132,7 @@ export function FamilyMembersList({ members }: FamilyMembersListProps) {
               left={(props) => (
                 <Avatar.Text
                   {...props}
-                  label={member.name.substring(0, 2)}
+                  label={member?.name?.substring(0, 1).toUpperCase()}
                   size={40}
                 />
               )}

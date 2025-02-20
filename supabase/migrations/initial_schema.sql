@@ -55,26 +55,25 @@ CREATE TABLE expenses (
     notes TEXT
 );
 
--- Wallets table
-CREATE TABLE wallets (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    balance DECIMAL(10,2) NOT NULL DEFAULT 0,
-    user_id UUID REFERENCES auth.users(id) NOT NULL,
-    family_id UUID REFERENCES families(id),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(user_id, family_id)
+-- Create wallets table
+create table wallets (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid references auth.users not null,
+  family_id uuid references families(id),
+  balance numeric(12,2) not null default 0,
+  created_at timestamp with time zone default timezone('utc'::text, now()),
+  unique_null_family unique (user_id, family_id)
 );
 
--- Wallet transactions table
-CREATE TABLE wallet_transactions (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    wallet_id UUID REFERENCES wallets(id) ON DELETE CASCADE,
-    amount DECIMAL(10,2) NOT NULL,
-    type TEXT NOT NULL CHECK (type IN ('credit', 'debit')),
-    description TEXT NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    expense_id UUID REFERENCES expenses(id)
+-- Create wallet transactions table
+create table wallet_transactions (
+  id uuid primary key default uuid_generate_v4(),
+  wallet_id uuid references wallets(id) not null,
+  user_id uuid references auth.users not null,
+  amount numeric(12,2) not null,
+  type varchar(10) check (type in ('credit', 'debit')),
+  description text,
+  created_at timestamp with time zone default timezone('utc'::text, now())
 );
 
 -- AI insights table
@@ -261,3 +260,21 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE TRIGGER on_auth_user_created
     AFTER INSERT ON auth.users
     FOR EACH ROW EXECUTE FUNCTION public.handle_new_user(); 
+
+
+-- Run this in your Supabase SQL editor
+create or replace function update_wallet_balance()
+returns trigger as $$
+begin
+  if TG_OP = 'INSERT' then
+    update wallets
+    set balance = balance + NEW.amount * case when NEW.type = 'credit' then 1 else -1 end
+    where id = NEW.wallet_id;
+  end if;
+  return NEW;
+end;
+$$ language plpgsql;
+
+create trigger update_balance_after_transaction
+after insert on wallet_transactions
+for each row execute function update_wallet_balance();

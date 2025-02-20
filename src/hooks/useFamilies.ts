@@ -9,12 +9,12 @@ export function useFamilies() {
 
   useEffect(() => {
     if (!user) return;
-
+    
     supabase
       .from('families')
       .select(`
         *,
-        family_members (
+        family_members!inner (
           id,
           role,
           status,
@@ -32,7 +32,6 @@ export function useFamilies() {
       .then(({ data, error }) => {
         if (error) console.error('Error fetching families:', error);
         else {
-          console.log('data:', JSON.stringify(data, null, 2))
           const processedFamilies = data?.map((family:any) => ({
             id: family.id,
             name: family.name,
@@ -43,9 +42,9 @@ export function useFamilies() {
               status: member.status,
               avatar: member.profiles.avatar_url
             })),
+            expenses: family.expenses,
             totalExpenses: family.expenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0
           }));
-          console.log('processedFamilies:', JSON.stringify(processedFamilies, null, 2))
           setFamilies(processedFamilies || []);
         }
         setLoading(false);

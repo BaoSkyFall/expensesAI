@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View, ActivityIndicator } from 'react-native';
 import { Card, List, Text, useTheme, Divider } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -12,44 +12,36 @@ type Transaction = {
   category?: string;
 };
 
-export function TransactionList() {
+type TransactionListProps = {
+  transactions?: Array<{
+    id: string;
+    type: 'credit' | 'debit';
+    amount: number;
+    description: string;
+    created_at: string;
+    expenses?: Array<{
+      category_id: string;
+      expense_categories: {
+        name: string;
+        icon: string;
+      }
+    }>;
+  }>;
+  loading?: boolean;
+};
+
+export function TransactionList({ transactions = [], loading }: TransactionListProps) {
   const theme = useTheme();
 
-  // Dummy data - replace with real data later
-  const transactions: Transaction[] = [
-    {
-      id: '1',
-      type: 'credit',
-      amount: 1000,
-      description: 'Salary',
-      date: '2024-01-15',
-    },
-    {
-      id: '2',
-      type: 'debit',
-      amount: 50,
-      description: 'Grocery shopping',
-      date: '2024-01-14',
-      category: 'Food',
-    },
-    {
-      id: '3',
-      type: 'debit',
-      amount: 30,
-      description: 'Gas',
-      date: '2024-01-13',
-      category: 'Transport',
-    },
-  ];
-
-  const renderTransaction = ({ item }: { item: Transaction }) => (
+  const renderTransaction = ({ item }: { item: TransactionListProps['transactions'][0] }) => (
     <>
       <List.Item
         title={item.description}
-        description={item.date}
+        description={item.expenses?.[0]?.expense_categories?.name || new Date(item.created_at).toLocaleDateString()}
         left={(props) => (
           <MaterialCommunityIcons
-            name={item.type === 'credit' ? 'arrow-up-circle' : 'arrow-down-circle'}
+            name={item.expenses?.[0]?.expense_categories?.icon || 
+                 (item.type === 'credit' ? 'arrow-up-circle' : 'arrow-down-circle')}
             size={24}
             color={item.type === 'credit' ? theme.colors.primary : theme.colors.error}
             {...props}
@@ -62,7 +54,7 @@ export function TransactionList() {
               color: item.type === 'credit' ? theme.colors.primary : theme.colors.error,
             }}
           >
-            {item.type === 'credit' ? '+' : '-'}${item.amount}
+            {item.type === 'credit' ? '+' : '-'}${item.amount.toFixed(2)}
           </Text>
         )}
       />
@@ -73,16 +65,22 @@ export function TransactionList() {
   return (
     <Card style={styles.card}>
       <Card.Title title="Recent Transactions" />
-      <FlatList
-        data={transactions}
-        renderItem={renderTransaction}
-        keyExtractor={(item) => item.id}
-        ListEmptyComponent={() => (
-          <View style={styles.emptyContainer}>
-            <Text variant="bodyLarge">No transactions yet</Text>
-          </View>
-        )}
-      />
+      {loading ? (
+        <View style={styles.emptyContainer}>
+          <ActivityIndicator animating={true} />
+        </View>
+      ) : (
+        <FlatList
+          data={transactions}
+          renderItem={renderTransaction}
+          keyExtractor={(item) => item.id}
+          ListEmptyComponent={() => (
+            <View style={styles.emptyContainer}>
+              <Text variant="bodyLarge">No transactions yet</Text>
+            </View>
+          )}
+        />
+      )}
     </Card>
   );
 }
